@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoForge Mecânica — São Paulo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --black:   #0E0E0E;
+  --graphite:#1C1C1C;
+  --steel:   #2A2A2A;
+  --orange:  #E85D04;
+  --orange-dk:#C44E03;
+  --ash:     #F0EDE8;
+  --mid:     #888;
+  --rule:    rgba(255,255,255,.07);
+  --font-d:  'Bebas Neue', Impact, sans-serif;
+  --font-b:  'Inter', system-ui, sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);background:var(--black);color:var(--ash);overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;height:64px;
+  background:rgba(14,14,14,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.nav-logo{
+  font-family:var(--font-d);font-size:1.6rem;letter-spacing:.05em;
+  color:var(--ash);display:flex;align-items:center;gap:.5rem;
+}
+.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(240,237,232,.6);transition:color .2s;
+}
+.nav-links a:hover{color:var(--orange)}
+.nav-cta{
+  background:var(--orange);color:var(--black);
+  padding:.5rem 1.4rem;font-size:.73rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background .2s;
+}
+.nav-cta:hover{background:var(--orange-dk)}
+
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--ash);border-radius:1px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.mobile-menu{
+  /* 
+    visibility:hidden + pointer-events:none = completamente inacessível
+    mas sem o "flash" que display:none pode causar em alguns navegadores mobile.
+    A classe .open reverte isso e exibe o menu.
+  */
+  position:fixed;top:64px;left:0;right:0;bottom:0;
+  background:var(--graphite);z-index:899;flex-direction:column;
+  padding:2.5rem 6vw;gap:.25rem;
+  display:flex;                    /* sempre flex para a direção funcionar */
+  visibility:hidden;               /* invisível e sem interação por padrão */
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease, visibility .25s ease;
+}
+.mobile-menu.open{
+  visibility:visible;
+  opacity:1;
+  pointer-events:all;
+}
+.mobile-menu a{
+  font-size:1.4rem;color:rgba(240,237,232,.8);padding:1rem 0;
+  border-bottom:1px solid var(--rule);font-family:var(--font-d);
+  letter-spacing:.05em;transition:color .2s;
+}
+.mobile-menu a:hover{color:var(--orange)}
+.mobile-menu .m-cta{
+  margin-top:1.5rem;background:var(--orange);color:var(--black);
+  padding:1rem;text-align:center;font-family:var(--font-b);
+  font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border:none;cursor:pointer;
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero{
+  min-height:100vh;padding-top:64px;
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;
+  background:var(--black);
+}
+
+/* Textura de metal escovado via gradiente */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,.012) 2px,
+    rgba(255,255,255,.012) 4px
+  );
+  pointer-events:none;
+}
+
+/* Linha laranja diagonal — assinatura visual */
+.hero::after{
+  content:'';position:absolute;
+  top:-20%;right:30%;
+  width:3px;height:160%;
+  background:linear-gradient(to bottom, transparent, var(--orange), transparent);
+  transform:rotate(15deg);
+  opacity:.5;
+  pointer-events:none;
+}
+
+.hero-content{
+  position:relative;z-index:2;
+  padding:6vw 8vw;
+  max-width:680px;
+}
+
+.hero-tag{
+  font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--orange);font-weight:600;margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.hero-tag::before{content:'';width:32px;height:1px;background:var(--orange)}
+
+.hero h1{
+  font-family:var(--font-d);
+  font-size:clamp(4rem,9vw,9rem);
+  line-height:.92;letter-spacing:.02em;
+  color:var(--ash);
+}
+.hero h1 .accent{color:var(--orange)}
+
+.hero-sub{
+  margin-top:2rem;font-size:1rem;line-height:1.75;
+  color:rgba(240,237,232,.55);max-width:420px;
+}
+
+.hero-actions{margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap}
+
+.btn-orange{
+  background:var(--orange);color:var(--black);
+  padding:.9rem 2.2rem;font-size:.78rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background .2s,transform .15s;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-orange:hover{background:var(--orange-dk);transform:translateY(-1px)}
+
+.btn-ghost{
+  border:1px solid rgba(240,237,232,.2);color:var(--ash);
+  padding:.9rem 2.2rem;font-size:.78rem;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  background:none;cursor:pointer;
+  transition:border-color .2s,color .2s;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+
+/* Velocímetro decorativo — elemento assinatura */
+.hero-deco{
+  position:absolute;right:-5%;top:50%;transform:translateY(-50%);
+  width:min(60vw, 620px);height:min(60vw, 620px);
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.hero-deco::before{
+  content:'';position:absolute;inset:30px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.04);
+}
+.hero-deco::after{
+  content:'';position:absolute;inset:60px;border-radius:50%;
+  border:1px solid rgba(232,93,4,.12);
+}
+.hero-deco-num{
+  font-family:var(--font-d);
+  font-size:clamp(8rem,18vw,18rem);
+  color:rgba(255,255,255,.03);
+  letter-spacing:-.05em;
+  user-select:none;
+}
+
+.hero-stats{
+  margin-top:3.5rem;display:flex;gap:3rem;flex-wrap:wrap;
+  border-top:1px solid var(--rule);padding-top:2rem;
+}
+.h-stat-num{
+  font-family:var(--font-d);font-size:2.2rem;
+  color:var(--orange);line-height:1;
+}
+.h-stat-lbl{
+  font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(240,237,232,.4);margin-top:.3rem;
+}
+
+/* ─────────────────────────────────────────
+   RIBBON
+───────────────────────────────────────── */
+.ribbon{
+  background:var(--orange);overflow:hidden;padding:.8rem 0;
+}
+.ribbon-track{
+  display:flex;gap:2.5rem;white-space:nowrap;
+  animation:marquee 24s linear infinite;width:max-content;
+}
+.ribbon-item{
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;color:var(--black);flex-shrink:0;
+  display:flex;align-items:center;gap:.6rem;
+}
+.ribbon-item::after{content:'◆';font-size:.4rem;opacity:.5}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ─────────────────────────────────────────
+   SERVIÇOS
+───────────────────────────────────────── */
+.services{background:var(--graphite);padding:90px 8vw}
+.section-header{margin-bottom:3.5rem}
+.eyebrow{
+  font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--orange);font-weight:600;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--orange)}
+.section-header h2{
+  font-family:var(--font-d);
+  font-size:clamp(2.2rem,4vw,3.8rem);
+  color:var(--ash);letter-spacing:.03em;line-height:1.05;
+}
+.section-header h2 span{color:var(--orange)}
+
+.services-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+}
+.svc-card{
+  background:var(--graphite);padding:2.5rem 2rem;
+  border-bottom:3px solid transparent;
+  transition:border-color .3s,background .3s;
+  cursor:pointer;
+}
+.svc-card:hover{border-color:var(--orange);background:var(--steel)}
+.svc-icon{
+  width:48px;height:48px;background:var(--steel);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.5rem;font-size:1.3rem;
+  border:1px solid var(--rule);transition:background .3s,border-color .3s;
+}
+.svc-card:hover .svc-icon{background:var(--orange);border-color:var(--orange)}
+.svc-card h3{
+  font-family:var(--font-d);font-size:1.4rem;letter-spacing:.03em;
+  color:var(--ash);margin-bottom:.6rem;
+}
+.svc-card p{font-size:.82rem;color:var(--mid);line-height:1.7}
+.svc-price{
+  margin-top:1.5rem;font-family:var(--font-d);font-size:1.2rem;
+  color:var(--orange);letter-spacing:.05em;
+}
+.svc-price small{font-family:var(--font-b);font-size:.7rem;color:var(--mid);font-weight:400;letter-spacing:0}
+
+/* ─────────────────────────────────────────
+   POR QUÊ NÓS
+───────────────────────────────────────── */
+.why{background:var(--black);padding:90px 8vw}
+.why-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.why-visual{position:relative}
+.why-panel{
+  background:var(--graphite);border:1px solid var(--rule);
+  padding:3rem;position:relative;overflow:hidden;
+}
+.why-panel::before{
+  content:'';position:absolute;top:0;left:0;
+  width:4px;height:100%;background:var(--orange);
+}
+.why-big{
+  font-family:var(--font-d);font-size:clamp(5rem,10vw,10rem);
+  color:rgba(232,93,4,.12);line-height:1;letter-spacing:-.02em;
+  position:absolute;bottom:-1rem;right:-1rem;
+  pointer-events:none;user-select:none;
+}
+.why-items{display:flex;flex-direction:column;gap:1.5rem;margin-top:2.5rem}
+.why-item{display:flex;gap:1rem;align-items:flex-start}
+.why-num{
+  font-family:var(--font-d);font-size:2rem;color:var(--orange);
+  line-height:1;min-width:2.5rem;flex-shrink:0;
+}
+.why-item h4{font-size:.9rem;font-weight:600;color:var(--ash);margin-bottom:.3rem}
+.why-item p{font-size:.8rem;color:var(--mid);line-height:1.65}
+.why-text p{font-size:.95rem;line-height:1.8;color:rgba(240,237,232,.6);margin-top:1.25rem}
+
+/* ─────────────────────────────────────────
+   AGENDAMENTO (seção visível)
+───────────────────────────────────────── */
+.booking-section{
+  background:var(--graphite);padding:90px 8vw;
+  border-top:1px solid var(--rule);
+}
+.booking-inner{display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:start}
+.booking-text p{font-size:.93rem;color:var(--mid);line-height:1.8;margin-top:1.2rem}
+
+/* Steps visuais */
+.booking-steps{margin-top:2.5rem;display:flex;flex-direction:column;gap:1.5rem}
+.bstep{display:flex;align-items:center;gap:1rem}
+.bstep-num{
+  width:36px;height:36px;border:1px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-d);font-size:1.1rem;color:var(--orange);
+  flex-shrink:0;
+}
+.bstep-lbl{font-size:.82rem;color:rgba(240,237,232,.7)}
+.bstep-line{width:1px;height:24px;background:var(--rule);margin-left:17px}
+
+/* Formulário de agendamento inline */
+.booking-form{background:var(--steel);padding:2.5rem;border:1px solid var(--rule)}
+.booking-form h3{
+  font-family:var(--font-d);font-size:1.6rem;letter-spacing:.03em;
+  color:var(--ash);margin-bottom:.4rem;
+}
+.booking-form>p{font-size:.78rem;color:var(--mid);margin-bottom:2rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row.single{grid-template-columns:1fr}
+.fgroup{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.fgroup label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,237,232,.5);font-weight:600}
+.fgroup input,.fgroup select,.fgroup textarea{
+  background:var(--graphite);border:1px solid rgba(255,255,255,.1);
+  color:var(--ash);padding:.75rem 1rem;font-family:var(--font-b);
+  font-size:.88rem;transition:border-color .2s,box-shadow .2s;width:100%;
+}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{
+  outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,93,4,.12);
+}
+.fgroup select option{background:var(--graphite)}
+.fgroup textarea{resize:vertical;min-height:90px}
+.fgroup input.err,.fgroup select.err{border-color:#ff4444}
+.ferr{font-size:.7rem;color:#ff4444;min-height:.9rem}
+
+.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.5rem}
+.slot-btn{
+  background:var(--graphite);border:1px solid rgba(255,255,255,.1);
+  color:rgba(240,237,232,.6);padding:.5rem;font-size:.75rem;font-weight:500;
+  cursor:pointer;transition:all .2s;text-align:center;
+}
+.slot-btn:hover{border-color:var(--orange);color:var(--orange)}
+.slot-btn.selected{background:var(--orange);border-color:var(--orange);color:var(--black);font-weight:700}
+.slot-btn.unavailable{opacity:.3;cursor:not-allowed;pointer-events:none}
+
+.form-submit{
+  background:var(--orange);color:var(--black);border:none;
+  width:100%;padding:1rem;font-family:var(--font-b);font-size:.82rem;
+  font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;margin-top:1.5rem;transition:background .2s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.form-submit:hover{background:var(--orange-dk)}
+.form-submit:disabled{opacity:.5;cursor:not-allowed}
+
+/* Confirmação */
+.booking-confirm{
+  display:none;text-align:center;padding:2rem 0;
+}
+.confirm-icon{font-size:3rem;margin-bottom:1rem}
+.booking-confirm h3{font-family:var(--font-d);font-size:2rem;color:var(--ash);margin-bottom:.5rem}
+.booking-confirm p{font-size:.88rem;color:var(--mid)}
+.confirm-badge{
+  background:rgba(232,93,4,.15);border:1px solid rgba(232,93,4,.3);
+  padding:1rem 1.5rem;margin:1.5rem 0;display:inline-block;text-align:left;
+}
+.confirm-badge strong{font-family:var(--font-d);font-size:.9rem;color:var(--orange);letter-spacing:.05em}
+.confirm-badge span{display:block;font-size:.82rem;color:rgba(240,237,232,.6);margin-top:.2rem}
+
+/* ─────────────────────────────────────────
+   DEPOIMENTOS
+───────────────────────────────────────── */
+.reviews{background:var(--black);padding:90px 8vw}
+.reviews-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+  margin-top:3rem;
+}
+.review-card{background:var(--black);padding:2rem}
+.stars{color:var(--orange);font-size:.85rem;letter-spacing:.1em;margin-bottom:1rem}
+.review-card p{font-size:.85rem;color:rgba(240,237,232,.65);line-height:1.7;font-style:italic}
+.reviewer{display:flex;align-items:center;gap:.75rem;margin-top:1.5rem}
+.reviewer-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--steel);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:700;color:var(--orange);font-family:var(--font-d);
+}
+.reviewer-name{font-size:.82rem;font-weight:600;color:var(--ash)}
+.reviewer-car{font-size:.72rem;color:var(--mid)}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer{
+  background:var(--graphite);border-top:1px solid var(--rule);
+  padding:60px 8vw 32px;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;
+  padding-bottom:2.5rem;border-bottom:1px solid var(--rule);
+}
+.footer-logo{font-family:var(--font-d);font-size:1.8rem;color:var(--ash);margin-bottom:.75rem}
+.footer-logo span{color:var(--orange)}
+.footer-desc{font-size:.82rem;color:var(--mid);line-height:1.7;max-width:260px}
+.footer-contact{margin-top:1.25rem}
+.footer-contact a,.footer-contact span{
+  display:block;font-size:.8rem;color:rgba(240,237,232,.45);
+  margin-bottom:.3rem;transition:color .2s;
+}
+.footer-contact a:hover{color:var(--orange)}
+.footer-col h4{
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--orange);font-weight:700;margin-bottom:1rem;
+}
+.footer-col a{
+  display:block;font-size:.8rem;color:rgba(240,237,232,.45);
+  margin-bottom:.45rem;transition:color .2s;
+}
+.footer-col a:hover{color:var(--ash)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:1.75rem;font-size:.7rem;color:rgba(240,237,232,.25);flex-wrap:wrap;gap:1rem;
+}
+
+/* WhatsApp */
+.wa-float{
+  position:fixed;bottom:24px;right:24px;z-index:800;
+  width:54px;height:54px;border-radius:50%;background:#25D366;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(37,211,102,.35);
+  transition:transform .2s;
+}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:26px;height:26px;fill:white}
+
+/* ─────────────────────────────────────────
+   RESPONSIVIDADE
+───────────────────────────────────────── */
+@media(max-width:900px){
+  .nav-links,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .hero-deco{display:none}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .why-inner{grid-template-columns:1fr;gap:3rem}
+  .booking-inner{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .services-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .slot-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .hero h1{font-size:clamp(3rem,14vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  .ribbon-track{animation:none}
+  *{transition-duration:0ms!important}
+}
+:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+:focus:not(:focus-visible){outline:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Auto<span>Forge</span></div>
+  <ul class="nav-links">
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#porque-nos">Por que nós</a></li>
+    <li><a href="#agendar">Agendar</a></li>
+    <li><a href="#depoimentos">Avaliações</a></li>
+  </ul>
+  <button class="nav-cta" onclick="scrollTo('#agendar')">Agendar visita</button>
+  <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <a href="#servicos"   onclick="closeMenu()">Serviços</a>
+  <a href="#porque-nos" onclick="closeMenu()">Por que nós</a>
+  <a href="#agendar"    onclick="closeMenu()">Agendar</a>
+  <a href="#depoimentos" onclick="closeMenu()">Avaliações</a>
+  <button class="m-cta" onclick="closeMenu();document.querySelector('#agendar').scrollIntoView({behavior:'smooth'})">Agendar visita</button>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-content">
+    <div class="hero-tag">São Paulo — Desde 2009</div>
+    <h1>
+      MECÂNICA<br>
+      QUE <span class="accent">ENTENDE</span><br>
+      SEU CARRO
+    </h1>
+    <p class="hero-sub">
+      Diagnóstico preciso, mão de obra especializada e peças originais.
+      Mais de 4.000 veículos atendidos na zona norte.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-orange" onclick="document.querySelector('#agendar').scrollIntoView({behavior:'smooth'})">
+        🔧 Agendar serviço
+      </button>
+      <button class="btn-ghost" onclick="document.querySelector('#servicos').scrollIntoView({behavior:'smooth'})">
+        Ver serviços →
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="h-stat-num">4.2K+</div><div class="h-stat-lbl">Veículos atendidos</div></div>
+      <div><div class="h-stat-num">15</div><div class="h-stat-lbl">Anos no mercado</div></div>
+      <div><div class="h-stat-num">98%</div><div class="h-stat-lbl">Clientes satisfeitos</div></div>
+    </div>
+  </div>
+  <div class="hero-deco" aria-hidden="true">
+    <div class="hero-deco-num">360</div>
+  </div>
+</section>
+
+<!-- RIBBON -->
+<div class="ribbon" aria-hidden="true">
+  <div class="ribbon-track">
+    <span class="ribbon-item">Revisão Completa</span>
+    <span class="ribbon-item">Troca de Óleo</span>
+    <span class="ribbon-item">Freios e Suspensão</span>
+    <span class="ribbon-item">Diagnóstico Eletrônico</span>
+    <span class="ribbon-item">Ar Condicionado</span>
+    <span class="ribbon-item">Motor e Câmbio</span>
+    <span class="ribbon-item">Alinhamento e Balanceamento</span>
+    <span class="ribbon-item">Revisão Completa</span>
+    <span class="ribbon-item">Troca de Óleo</span>
+    <span class="ribbon-item">Freios e Suspensão</span>
+    <span class="ribbon-item">Diagnóstico Eletrônico</span>
+    <span class="ribbon-item">Ar Condicionado</span>
+    <span class="ribbon-item">Motor e Câmbio</span>
+    <span class="ribbon-item">Alinhamento e Balanceamento</span>
+  </div>
+</div>
+
+<!-- SERVIÇOS -->
+<section class="services" id="servicos">
+  <div class="section-header">
+    <div class="eyebrow">O que fazemos</div>
+    <h2>SERVIÇOS <span>ESPECIALIZADOS</span></h2>
+  </div>
+  <div class="services-grid">
+    <div class="svc-card">
+      <div class="svc-icon">🔍</div>
+      <h3>Diagnóstico Eletrônico</h3>
+      <p>Scanner automotivo de última geração que identifica falhas em todos os sistemas do veículo com precisão total.</p>
+      <div class="svc-price">R$ 120 <small>/ diagnóstico completo</small></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🛢️</div>
+      <h3>Troca de Óleo</h3>
+      <p>Óleos sintéticos, semissintéticos e minerais das melhores marcas. Inclui checagem completa dos fluídos.</p>
+      <div class="svc-price">A partir de R$ 180 <small>/ completo</small></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">⚙️</div>
+      <h3>Motor e Câmbio</h3>
+      <p>Retífica, revisão e substituição de peças com garantia de 12 meses e peças originais certificadas.</p>
+      <div class="svc-price">Orçamento <small>/ sob consulta</small></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🛑</div>
+      <h3>Freios e Suspensão</h3>
+      <p>Pastilhas, discos, amortecedores e pivôs. Segurança em primeiro lugar — peças verificadas e testadas.</p>
+      <div class="svc-price">A partir de R$ 250 <small>/ eixo</small></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">❄️</div>
+      <h3>Ar Condicionado</h3>
+      <p>Recarga de gás, limpeza do sistema, troca de filtro de cabine e manutenção do compressor.</p>
+      <div class="svc-price">A partir de R$ 200 <small>/ serviço</small></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">🔄</div>
+      <h3>Revisão Completa</h3>
+      <p>Revisão preventiva com mais de 50 itens verificados. Entregamos relatório digital detalhado.</p>
+      <div class="svc-price">A partir de R$ 350 <small>/ revisão</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÊ NÓS -->
+<section class="why" id="porque-nos">
+  <div class="why-inner">
+    <div class="why-visual">
+      <div class="why-panel">
+        <div class="eyebrow" style="color:var(--orange)">Nossa diferença</div>
+        <h2 style="color:var(--ash);font-family:var(--font-d);font-size:clamp(2rem,3.5vw,3rem);letter-spacing:.03em;margin-top:.5rem">
+          FEITO POR<br>QUEM <span style="color:var(--orange)">AMA</span><br>O QUE FAZ
+        </h2>
+        <div class="why-big" aria-hidden="true">15</div>
+      </div>
+    </div>
+    <div class="why-text">
+      <div class="eyebrow">Por que escolher a AutoForge</div>
+      <h2 style="font-family:var(--font-d);font-size:clamp(1.8rem,3vw,2.8rem);letter-spacing:.03em;color:var(--ash)">
+        TRANSPARÊNCIA EM <span style="color:var(--orange)">CADA ETAPA</span>
+      </h2>
+      <p>Aqui você aprova o orçamento antes de qualquer serviço. Sem surpresas na hora de buscar o carro.</p>
+      <div class="why-items">
+        <div class="why-item">
+          <div class="why-num">01</div>
+          <div>
+            <h4>Orçamento sem compromisso</h4>
+            <p>Diagnóstico honesto e orçamento detalhado antes de qualquer peça ser tocada.</p>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-num">02</div>
+          <div>
+            <h4>Garantia de 12 meses</h4>
+            <p>Todos os serviços têm garantia de mão de obra e as peças vêm com garantia do fabricante.</p>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-num">03</div>
+          <div>
+            <h4>Acompanhamento em tempo real</h4>
+            <p>Foto e vídeo do serviço enviados pelo WhatsApp. Você vê tudo o que está sendo feito.</p>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-num">04</div>
+          <div>
+            <h4>Equipe certificada</h4>
+            <p>Mecânicos com certificação técnica e treinamento contínuo nas mais recentes tecnologias.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDAMENTO -->
+<section class="booking-section" id="agendar">
+  <div class="booking-inner">
+    <div class="booking-text">
+      <div class="eyebrow">Agendamento online</div>
+      <h2 style="font-family:var(--font-d);font-size:clamp(2rem,3.5vw,3.2rem);letter-spacing:.03em;color:var(--ash)">
+        AGENDE EM<br><span style="color:var(--orange)">3 MINUTOS</span>
+      </h2>
+      <p>Escolha o serviço, o dia e o horário. A confirmação chega no seu WhatsApp na hora.</p>
+      <div class="booking-steps">
+        <div class="bstep"><div class="bstep-num">1</div><div class="bstep-lbl">Preencha seus dados</div></div>
+        <div class="bstep-line"></div>
+        <div class="bstep"><div class="bstep-num">2</div><div class="bstep-lbl">Escolha o serviço e horário</div></div>
+        <div class="bstep-line"></div>
+        <div class="bstep"><div class="bstep-num">3</div><div class="bstep-lbl">Receba a confirmação</div></div>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="booking-form" id="bookingForm">
+      <h3>NOVO AGENDAMENTO</h3>
+      <p>Campos com * são obrigatórios</p>
+
+      <div class="form-row">
+        <div class="fgroup">
+          <label for="bName">Nome *</label>
+          <input type="text" id="bName" placeholder="Seu nome completo" maxlength="80">
+          <span class="ferr" id="bNameErr"></span>
+        </div>
+        <div class="fgroup">
+          <label for="bPhone">WhatsApp *</label>
+          <input type="tel" id="bPhone" placeholder="(11) 99999-9999" maxlength="20">
+          <span class="ferr" id="bPhoneErr"></span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fgroup">
+          <label for="bCar">Veículo *</label>
+          <input type="text" id="bCar" placeholder="Ex: Civic 2020" maxlength="60">
+          <span class="ferr" id="bCarErr"></span>
+        </div>
+        <div class="fgroup">
+          <label for="bPlate">Placa</label>
+          <input type="text" id="bPlate" placeholder="ABC-1234" maxlength="8">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="fgroup">
+          <label for="bService">Serviço desejado *</label>
+          <select id="bService">
+            <option value="">Selecione o serviço</option>
+            <option value="diagnostico">Diagnóstico Eletrônico — R$ 120</option>
+            <option value="oleo">Troca de Óleo — a partir de R$ 180</option>
+            <option value="motor">Motor e Câmbio — sob consulta</option>
+            <option value="freios">Freios e Suspensão — a partir de R$ 250</option>
+            <option value="ar">Ar Condicionado — a partir de R$ 200</option>
+            <option value="revisao">Revisão Completa — a partir de R$ 350</option>
+            <option value="outro">Outro / Não sei</option>
+          </select>
+          <span class="ferr" id="bServiceErr"></span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fgroup">
+          <label for="bDate">Data preferida *</label>
+          <input type="date" id="bDate">
+          <span class="ferr" id="bDateErr"></span>
+        </div>
+        <div class="fgroup">
+          <label>Horário *</label>
+          <div class="slot-grid" id="slotGrid">
+            <button type="button" class="slot-btn" data-time="07:30">07:30</button>
+            <button type="button" class="slot-btn" data-time="08:00">08:00</button>
+            <button type="button" class="slot-btn" data-time="08:30">08:30</button>
+            <button type="button" class="slot-btn unavailable" data-time="09:00">09:00</button>
+            <button type="button" class="slot-btn" data-time="09:30">09:30</button>
+            <button type="button" class="slot-btn unavailable" data-time="10:00">10:00</button>
+            <button type="button" class="slot-btn" data-time="10:30">10:30</button>
+            <button type="button" class="slot-btn" data-time="11:00">11:00</button>
+            <button type="button" class="slot-btn unavailable" data-time="13:00">13:00</button>
+            <button type="button" class="slot-btn" data-time="13:30">13:30</button>
+            <button type="button" class="slot-btn" data-time="14:00">14:00</button>
+            <button type="button" class="slot-btn" data-time="15:00">15:00</button>
+          </div>
+          <span class="ferr" id="bSlotErr"></span>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="fgroup">
+          <label for="bNotes">Observações</label>
+          <textarea id="bNotes" placeholder="Descreva o problema ou o que notou no veículo..." rows="3" maxlength="500"></textarea>
+        </div>
+      </div>
+
+      <button class="form-submit" id="formSubmit" type="button">
+        🔧 Confirmar agendamento
+      </button>
+    </div>
+
+    <!-- CONFIRMAÇÃO -->
+    <div class="booking-confirm" id="bookingConfirm">
+      <div class="confirm-icon">✅</div>
+      <h3>AGENDADO!</h3>
+      <p>Você receberá a confirmação no seu WhatsApp em instantes.</p>
+      <div class="confirm-badge">
+        <strong id="confirmSummary">—</strong>
+        <span id="confirmDate">—</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--mid);margin-top:1rem">
+        Dúvidas? Fale pelo WhatsApp<br>
+        <a href="https://wa.me/5511999990000" style="color:var(--orange)">(11) 99999-0000</a>
+      </p>
+      <button class="btn-ghost" style="margin-top:1.5rem;border:1px solid rgba(240,237,232,.2)" onclick="resetForm()">
+        + Novo agendamento
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="reviews" id="depoimentos">
+  <div class="section-header">
+    <div class="eyebrow">O que dizem nossos clientes</div>
+    <h2 style="font-family:var(--font-d);color:var(--ash);letter-spacing:.03em">
+      AVALIAÇÕES <span style="color:var(--orange)">REAIS</span>
+    </h2>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p>"Levei meu Corolla com barulho no motor e saiu em menos de 2 dias. Orçamento certinho, sem surpresa nenhuma. Recomendo demais!"</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">RM</div>
+        <div><div class="reviewer-name">Rafael Mendes</div><div class="reviewer-car">Toyota Corolla 2019</div></div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p>"Fui fazer a revisão dos 60.000 km e recebi vídeo de tudo que foi feito. Profissionalismo que não vejo em outra mecânica."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">CS</div>
+        <div><div class="reviewer-name">Camila Souza</div><div class="reviewer-car">Honda HRV 2021</div></div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p>"Diagnóstico preciso, preço justo e entregaram antes do prazo. Já indiquei para toda a família. A AutoForge é referência!"</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">PO</div>
+        <div><div class="reviewer-name">Pedro Oliveira</div><div class="reviewer-car">Jeep Renegade 2020</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Auto<span>Forge</span></div>
+      <p class="footer-desc">Mecânica especializada com 15 anos de experiência na zona norte de São Paulo. Transparência, qualidade e garantia em cada serviço.</p>
+      <div class="footer-contact">
+        <span>📍 Rua das Ferramentas, 1284 — Santana, SP</span>
+        <a href="tel:1132450000">📞 (11) 3245-0000</a>
+        <a href="https://wa.me/5511999990000" target="_blank" rel="noopener">💬 (11) 99999-0000</a>
+        <span>🕐 Seg–Sex: 7h–18h | Sáb: 7h–13h</span>
+      </div>
+    </div>
+    <nav aria-label="Serviços">
+      <div class="footer-col">
+        <h4>Serviços</h4>
+        <a href="#servicos">Diagnóstico Eletrônico</a>
+        <a href="#servicos">Troca de Óleo</a>
+        <a href="#servicos">Motor e Câmbio</a>
+        <a href="#servicos">Freios e Suspensão</a>
+        <a href="#servicos">Ar Condicionado</a>
+        <a href="#servicos">Revisão Completa</a>
+      </div>
+    </nav>
+    <nav aria-label="Links rápidos">
+      <div class="footer-col">
+        <h4>Links</h4>
+        <a href="#porque-nos">Por que nós</a>
+        <a href="#agendar">Agendamento</a>
+        <a href="#depoimentos">Avaliações</a>
+        <a href="https://wa.me/5511999990000" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 AutoForge Mecânica — Todos os direitos reservados</span>
+    <span>CNPJ: 00.000.000/0001-00</span>
+  </div>
+</footer>
+
+<!-- WhatsApp flutuante -->
+<a href="https://wa.me/5511999990000" class="wa-float" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+'use strict';
+
+// ── HAMBURGER ──
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+ham.addEventListener('click', () => {
+  const open = mob.classList.toggle('open');
+  ham.classList.toggle('open', open);
+  ham.setAttribute('aria-expanded', open);
+  mob.setAttribute('aria-hidden', !open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+function closeMenu() {
+  mob.classList.remove('open'); ham.classList.remove('open');
+  ham.setAttribute('aria-expanded','false'); mob.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+
+// ── NAV SCROLL ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.borderBottomColor = window.scrollY > 40
+    ? 'rgba(232,93,4,.3)' : 'rgba(255,255,255,.07)';
+}, {passive:true});
+
+// ── AGENDAMENTO ──
+let selectedSlot = '';
+
+// Seleciona slot de horário
+document.getElementById('slotGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.slot-btn');
+  if (!btn || btn.classList.contains('unavailable')) return;
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedSlot = btn.dataset.time;
+  document.getElementById('bSlotErr').textContent = '';
+});
+
+// Define data mínima = amanhã
+const dateInput = document.getElementById('bDate');
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+dateInput.min = tomorrow.toISOString().split('T')[0];
+
+// Validação e envio
+document.getElementById('formSubmit').addEventListener('click', () => {
+  const name    = document.getElementById('bName').value.trim();
+  const phone   = document.getElementById('bPhone').value.trim();
+  const car     = document.getElementById('bCar').value.trim();
+  const service = document.getElementById('bService').value;
+  const date    = document.getElementById('bDate').value;
+  let ok = true;
+
+  const setErr = (id, msg) => {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    if(msg) document.getElementById(id.replace('Err','')).classList.add('err');
+    else     document.getElementById(id.replace('Err','')).classList.remove('err');
+  };
+
+  setErr('bNameErr',    !name                         ? 'Informe seu nome.'            : '');
+  setErr('bPhoneErr',   !phone                        ? 'Informe seu WhatsApp.'        : '');
+  setErr('bCarErr',     !car                          ? 'Informe o veículo.'           : '');
+  setErr('bServiceErr', !service                      ? 'Selecione um serviço.'        : '');
+  setErr('bDateErr',    !date                         ? 'Selecione a data.'            : '');
+
+  if(!name||!phone||!car||!service||!date) ok = false;
+
+  if(!selectedSlot) {
+    document.getElementById('bSlotErr').textContent = 'Escolha um horário.';
+    ok = false;
+  }
+
+  if(!ok) return;
+
+  // Simula envio
+  const btn = document.getElementById('formSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Agendando...';
+
+  setTimeout(() => {
+    const serviceLabel = document.getElementById('bService').options[document.getElementById('bService').selectedIndex].text;
+    const [y,m,d] = date.split('-');
+    const dateLabel = `${d}/${m}/${y}`;
+
+    document.getElementById('confirmSummary').textContent = serviceLabel;
+    document.getElementById('confirmDate').textContent    = `${dateLabel} às ${selectedSlot} — ${car}`;
+
+    document.getElementById('bookingForm').style.display    = 'none';
+    document.getElementById('bookingConfirm').style.display = 'block';
+  }, 1200);
+});
+
+function resetForm() {
+  document.getElementById('bookingForm').style.display    = '';
+  document.getElementById('bookingConfirm').style.display = 'none';
+  document.getElementById('formSubmit').disabled = false;
+  document.getElementById('formSubmit').textContent = '🔧 Confirmar agendamento';
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  selectedSlot = '';
+  ['bName','bPhone','bCar','bPlate','bNotes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('bService').value = '';
+  document.getElementById('bDate').value = '';
+}
+
+// ── ANIMAÇÃO DE ENTRADA ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, {threshold:.1});
+document.querySelectorAll('.svc-card,.review-card,.why-item,.bstep').forEach(el => {
+  el.style.cssText = 'opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease';
+  observer.observe(el);
+});
+document.addEventListener('DOMContentLoaded', () => {});
+
+// Adiciona .visible via CSS
+const s = document.createElement('style');
+s.textContent = '.visible{opacity:1!important;transform:none!important}';
+document.head.appendChild(s);
+</script>
+</body>
+</html>
